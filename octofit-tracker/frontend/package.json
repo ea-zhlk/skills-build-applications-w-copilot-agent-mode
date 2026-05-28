@@ -1,7 +1,7 @@
 {
   "name": "octofit-tracker-frontend",
   "version": "1.0.0",
-  "description": "OctoFit Tracker frontend with React 19 and Vite",
+  "description": "OctoFit Tracker frontend with React 19 and Vite.",
   "type": "module",
   "scripts": {
     "dev": "vite --port 5173",
