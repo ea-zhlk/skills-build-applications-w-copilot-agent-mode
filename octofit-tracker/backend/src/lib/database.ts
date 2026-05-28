@@ -14,6 +14,7 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
   return mongoose.connect(mongoUri)
 }
 
+
 export async function disconnectDatabase(): Promise<void> {
   if (mongoose.connection.readyState !== 0) {
     await mongoose.disconnect()
