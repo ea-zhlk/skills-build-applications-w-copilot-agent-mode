@@ -1,0 +1,29 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  color: #123331;
+  background:
+    radial-gradient(circle at top left, rgba(255, 200, 87, 0.28), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(17, 47, 74, 0.16), transparent 22%),
+    linear-gradient(180deg, #f5f0e7 0%, #f7f5ef 48%, #eef2ef 100%);
+}
+
+body {
+  font-family: 'Trebuchet MS', 'Gill Sans', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  background: transparent;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
