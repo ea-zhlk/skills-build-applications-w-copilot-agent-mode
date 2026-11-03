@@ -30,20 +30,21 @@ OctoFit Tracker is a three-tier application for a school fitness program. The st
 
 Record your plan here before editing code.
 
-- Presentation tier decision:
-- Logic tier decision:
-- Data tier decision:
-- Activity tracking approach:
-- Team management approach:
-- Leaderboard approach:
-- Workout suggestions approach:
+- **Presentation tier decision:** Keep each capability in its own React component and use the shared `getJson` client for relative `/api` requests. Render accessible loading, error, empty, and success states; keep presentation state and formatting out of the API and data tiers.
+- **Logic tier decision:** Keep Express routes thin and put validation and persistence behavior in `octofitService.ts`. Return the documented response envelopes and convert invalid input, malformed IDs, and missing records into deliberate 4xx responses rather than leaking Mongoose cast/validation errors as 500s.
+- **Data tier decision:** Use Mongoose models for schema validation, references, defaults, and persistence. Keep the seed additive and idempotent through stable upserts; do not clear collections or overwrite unrelated application data.
+- **Activity tracking approach:** Validate required fields, positive minutes, and well-formed IDs; verify the referenced user and team exist before creating a record. Store references, type, minutes, a deterministic computed points value (one point per minute), and `occurredAt`; return the persisted record from both create and list operations.
+- **Team management approach:** List teams with their names, mascots, and member IDs. Require a non-empty name when creating a team, preserve a supplied mascot and member list, and rely on model defaults for an omitted members array.
+- **Leaderboard approach:** Aggregate activity points by team, include each team’s name, sort by total points descending with a deterministic tie-break, and assign ranks starting at 1.
+- **Workout suggestions approach:** Resolve the user by email and return a deliberate 4xx if no user matches. Rank available workouts using the user’s fitness goal and recent activity, put the best match first, and include a concise reason; return an empty suggestions array when there are no suitable records.
 
 ## Test plan
 
-Record the commands you run and what each failure means.
+Run the focused contract suite after each tier, then run both builds and the full suites as a final check. Record actual outcomes when run; these commands are a plan, not a claim that validation has already passed.
 
-- Data-tier command: `npm run test:data --prefix octofit-tracker/backend`
-- API command: `npm run test:api --prefix octofit-tracker/backend`
-- Frontend command: `npm test --prefix octofit-tracker/frontend`
-- Backend build command: `npm run build --prefix octofit-tracker/backend`
-- Frontend build command: `npm run build --prefix octofit-tracker/frontend`
+1. **Data tier:** `npm run test:data --prefix octofit-tracker/backend` — failures point to model constraints/defaults/references or seed behavior, including idempotency and preservation of unrelated records.
+2. **Logic tier:** `npm run test:api --prefix octofit-tracker/backend` — failures point to route/service behavior, validation and 4xx handling, persisted response shapes, team membership, leaderboard totals/ranks, or recommendation matching.
+3. **Presentation tier:** `npm test --prefix octofit-tracker/frontend` — failures point to route rendering, API request construction, or accessible loading/success/empty/error states. The most recent supplied run reported **15 frontend tests failed**; the pages shown in its output still displayed “Implementation pending.”
+4. **Backend type check:** `npm run build --prefix octofit-tracker/backend` — failures indicate TypeScript errors in backend models, services, routes, or configuration.
+5. **Frontend type check and bundle:** `npm run build --prefix octofit-tracker/frontend` — failures indicate frontend TypeScript or Vite build issues.
+6. **Final regression check:** `npm test --prefix octofit-tracker/backend` and `npm test --prefix octofit-tracker/frontend` — confirm the focused changes did not regress other contracts.
